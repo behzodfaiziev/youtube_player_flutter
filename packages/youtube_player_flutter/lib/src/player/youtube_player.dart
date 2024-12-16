@@ -47,6 +47,7 @@ class YoutubePlayer extends StatefulWidget {
     this.aspectRatio = 16 / 9,
     this.controlsTimeOut = const Duration(seconds: 3),
     this.bufferIndicator,
+    this.initialBackgroundColor = Colors.black,
     Color? progressIndicatorColor,
     ProgressBarColors? progressColors,
     this.onReady,
@@ -116,6 +117,11 @@ class YoutubePlayer extends StatefulWidget {
   /// Overrides color of Live UI when enabled.
   /// {@endtemplate}
   final Color liveUIColor;
+
+  /// {@template youtube_player_flutter.initialBackgroundColor}
+  /// Overrides default initial background color of the player.
+  /// {@endtemplate}
+  final Color initialBackgroundColor;
 
   /// {@template youtube_player_flutter.topActions}
   /// Adds custom top bar widgets.
@@ -232,11 +238,11 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
   Widget build(BuildContext context) {
     return Material(
       elevation: 0,
-      color: Colors.black,
+      color: widget.initialBackgroundColor,
       child: InheritedYoutubePlayer(
         controller: controller,
         child: Container(
-          color: Colors.black,
+          color: widget.initialBackgroundColor,
           width: widget.width ?? MediaQuery.of(context).size.width,
           child: _buildPlayer(
             errorWidget: Container(
@@ -409,8 +415,9 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
               : controller.metadata.videoId,
         ),
         fit: BoxFit.cover,
-        loadingBuilder: (_, child, progress) =>
-            progress == null ? child : Container(color: Colors.black),
+        loadingBuilder: (_, child, progress) => progress == null
+            ? child
+            : Container(color: widget.initialBackgroundColor),
         errorBuilder: (context, _, __) => Image.network(
           YoutubePlayer.getThumbnail(
             videoId: controller.metadata.videoId.isEmpty
